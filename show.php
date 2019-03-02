@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+if(!isset($_SESSION['user_id'])) {
+  header('Location: login-form.php');
+  exit;
+}
+
 //Получаем данные
 $id = $_GET['id'];
 
@@ -10,6 +15,12 @@ $sql = "SELECT * FROM tasks WHERE id=:id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':id' => $id]);
 $task = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if($task['user_id'] !== $_SESSION['user_id']) {
+  $errorMessage = 'Упс! Ошибка!';
+  include 'errors.php';
+  exit;
+}
 ?>
 
 
@@ -24,9 +35,6 @@ $task = $stmt->fetch(PDO::FETCH_ASSOC);
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
     
-    <style>
-      
-    </style>
   </head>
 
   <body>
@@ -69,7 +77,7 @@ $task = $stmt->fetch(PDO::FETCH_ASSOC);
       </p>
       <div class="btn-group">
         <a href="edit-form.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary">Изменить</a>
-        <a href="delete.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary" onclick="confirm('are you sure?')">Удалить</a>
+        <a href="delete.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary" onclick="confirm('Вы уверены, что хотите удалить задачу?')">Удалить</a>
       </div>
       <div class="container">
         <a href="index.php">Вернуться к списку</a>

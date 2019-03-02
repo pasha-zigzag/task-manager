@@ -14,14 +14,15 @@ foreach($_POST as $data) {
 
 //Получение пользователя
 $pdo = new PDO('mysql:host=localhost;dbname=task-manager', 'root', '');
-$sql = 'SELECT email, password FROM users WHERE email=:email';
+$sql = 'SELECT id, email, password FROM users WHERE email=:email';
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':email' => $email]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 if($user) {
     if($user['password'] === md5($password)) {
         session_start();
-        $_SESSION['email'] = $email;
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['email'] = $user['email'];
         header('Location: index.php');
     } else {
         $errorMessage = 'Неверный e-mail или пароль!';

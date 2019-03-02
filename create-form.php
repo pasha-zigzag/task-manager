@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if(!isset($_SESSION['user_id'])) {
+  header('Location: login-form.php');
+  exit;
+}
+?>
 
 <!doctype html>
 <html lang="ru">
@@ -10,9 +18,6 @@
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
     
-    <style>
-      
-    </style>
   </head>
 
   <body>

@@ -1,16 +1,21 @@
 <?php
 session_start();
 
+if(!isset($_SESSION['user_id'])) {
+  $auth = false;
+} else {
+  $auth = true;
+}
+
 $pdo = new PDO('mysql:host=localhost;dbname=task-manager;charset=UTF8', 'root', '');
-$sql = 'SELECT * FROM tasks WHERE email=:email';
+$sql = 'SELECT * FROM tasks WHERE user_id=:user_id';
 $stmt = $pdo->prepare($sql);
-$stmt->execute([':email' => $_SESSION['email']]);
+$stmt->execute([':user_id' => $_SESSION['user_id']]);
 $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
-//var_dump($tasks);
 ?>
 
 <!doctype html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="utf-8">
 
@@ -60,7 +65,11 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
           <h1 class="jumbotron-heading">Проект Task-manager</h1>
           <p class="lead text-muted">Добро пожаловать в менеджер задач! Создавайте и редактируйте свои задачи, это легко и удобно! Не держите все в голове, помните - даже самый тупой карандаш лучше острой памяти.</p>
           <p>
-            <a href="create-form.php" class="btn btn-primary my-2">Добавить запись</a>
+            <?php if($auth) { ?>
+              <a href="create-form.php" class="btn btn-primary my-2">Добавить запись</a>
+            <?php } else { ?>
+              <a href="login-form.php" class="btn btn-primary my-2">Авторизоваться</a>
+            <?php } ?>
           </p>
         </div>
       </section>
@@ -80,7 +89,7 @@ $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <div class="btn-group">
                       <a href="show.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary">Подробнее</a>
                       <a href="edit-form.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary">Изменить</a>
-                      <a href="delete.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary" onclick="confirm('are you sure?')">Удалить</a>
+                      <a href="delete.php?id=<?= $task['id'] ?>" class="btn btn-sm btn-outline-secondary" onclick="confirm('Вы уверены, что хотите удалить задачу?')">Удалить</a>
                     </div>
                   </div>
                 </div>

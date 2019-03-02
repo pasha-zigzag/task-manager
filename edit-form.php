@@ -1,6 +1,11 @@
 <?php
 session_start();
 
+if(!isset($_SESSION['user_id'])) {
+  header('Location: login-form.php');
+  exit;
+}
+
 //Получаем данные
 $id = $_GET['id'];
 
@@ -10,6 +15,12 @@ $sql = "SELECT * FROM tasks WHERE id=:id";
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':id' => $id]);
 $task = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if($task['user_id'] !== $_SESSION['user_id']) {
+  $errorMessage = 'Упс! Ошибка!';
+  include 'errors.php';
+  exit;
+}
 ?>
 
 
@@ -23,10 +34,7 @@ $task = $stmt->fetch(PDO::FETCH_ASSOC);
     <!-- Bootstrap core CSS -->
     <link href="assets/css/bootstrap.css" rel="stylesheet">
     <link href="assets/css/style.css" rel="stylesheet">
-    
-    <style>
-      
-    </style>
+
   </head>
 
   <body>

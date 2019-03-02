@@ -27,12 +27,12 @@ if($_FILES['img']['error'] == 0) {
 
 //Сохранение данных
 $pdo = new PDO('mysql:host=localhost;dbname=task-manager;charset=UTF8', 'root', '');
-$sql = 'INSERT INTO tasks (task_name, description, image, email) VALUES (:task_name, :description, :image, :email)';
+$sql = 'INSERT INTO tasks (task_name, description, image, user_id) VALUES (:task_name, :description, :image, :user_id)';
 $stmt = $pdo->prepare($sql);
 $stmt->execute([':task_name'    => $name, 
                 ':description'  => $description, 
                 ':image'        => $image, 
-                ':email'        => $_SESSION['email']]);
+                ':user_id'      => $_SESSION['user_id']]);
 
 header('Location: index.php');
 
